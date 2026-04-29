@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -71,7 +73,7 @@ app.get('/profile', (req, res) => {
         return res.redirect('/auth/google');
     }
 
-    res.send(`Hello, ${req.user.displayName}!`);
+    res.send(`nigggaaaaaa, ${req.user.displayName}!`);
 });
 
 /* =========================
