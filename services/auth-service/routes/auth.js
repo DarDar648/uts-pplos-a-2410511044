@@ -1,14 +1,27 @@
-// routes/auth.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { jwtSecret, jwtExpiresIn } = require('../config');
-const { findByUsername, findById } = require('../models/user');
+
+const {
+  jwtSecret,
+  jwtExpiresIn,
+  refreshSecret,
+  refreshExpiresIn
+} = require('../config');
+
+const {
+  findByUsername,
+  findById,
+  saveRefreshToken,
+  removeRefreshToken,
+  isRefreshTokenValid,
+  blacklistToken,
+  isTokenBlacklisted
+} = require('../models/user');
 
 const router = express.Router();
 
-// Fungsi untuk membuat token JWT
-const generateToken = (user) => {
+const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id },
     jwtSecret,
@@ -16,7 +29,42 @@ const generateToken = (user) => {
   );
 };
 
-// Login dan menghasilkan token JWT
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user.id },
+    refreshSecret,
+    { expiresIn: refreshExpiresIn }
+  );
+};
+
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({
+      message: 'Token required'
+    });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  if (isTokenBlacklisted(token)) {
+    return res.status(403).json({
+      message: 'Token already logged out'
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    req.user = findById(decoded.id);
+    next();
+  } catch (err) {
+    return res.status(403).json({
+      message: 'Invalid or expired token'
+    });
+  }
+};
+
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -27,10 +75,7 @@ router.post('/login', (req, res) => {
     });
   }
 
-  const isPasswordValid = bcrypt.compareSync(
-    password,
-    user.password
-  );
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
 
   if (!isPasswordValid) {
     return res.status(401).json({
@@ -38,41 +83,80 @@ router.post('/login', (req, res) => {
     });
   }
 
-  const token = generateToken(user);
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  saveRefreshToken(refreshToken);
 
   return res.json({
     message: 'Login successful',
-    token
+    accessToken,
+    refreshToken
   });
 });
 
-// Middleware untuk memverifikasi JWT
-const authenticateJWT = (req, res, next) => {
-  const token =
-    req.headers.authorization &&
-    req.headers.authorization.split(' ')[1];
+router.post('/refresh', (req, res) => {
+  const { refreshToken } = req.body;
 
-  if (!token) {
+  if (!refreshToken) {
     return res.status(401).json({
-      message: 'Token not provided'
+      message: 'No refresh token provided'
+    });
+  }
+
+  if (!isRefreshTokenValid(refreshToken)) {
+    return res.status(403).json({
+      message: 'Invalid refresh token'
     });
   }
 
   try {
-    const decoded = jwt.verify(token, jwtSecret);
+    const decoded = jwt.verify(refreshToken, refreshSecret);
+    const user = findById(decoded.id);
+    const newAccessToken = generateAccessToken(user);
 
-    // Simpan data pengguna ke request
-    req.user = findById(decoded.id);
-
-    next();
+    return res.json({
+      accessToken: newAccessToken
+    });
   } catch (err) {
     return res.status(403).json({
-      message: 'Invalid token'
+      message: 'Refresh token expired'
     });
   }
-};
+});
 
-// Rute yang dilindungi
+router.post('/logout', (req, res) => {
+  const { refreshToken } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!refreshToken || !authHeader) {
+    return res.status(400).json({
+      message: 'Refresh token and access token required'
+    });
+  }
+
+  const accessToken = authHeader.split(' ')[1];
+
+  if (!isRefreshTokenValid(refreshToken)) {
+    return res.status(403).json({
+      message: 'Invalid refresh token'
+    });
+  }
+
+  if (isTokenBlacklisted(accessToken)) {
+    return res.status(403).json({
+      message: 'Already logged out'
+    });
+  }
+
+  removeRefreshToken(refreshToken);
+  blacklistToken(accessToken);
+
+  return res.json({
+    message: 'Logout successful'
+  });
+});
+
 router.get('/protected', authenticateJWT, (req, res) => {
   res.json({
     message: 'This is protected data',
