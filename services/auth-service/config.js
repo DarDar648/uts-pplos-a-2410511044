@@ -2,7 +2,9 @@ require('dotenv').config();
 
 module.exports = {
     jwtSecret: process.env.JWT_SECRET,
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN,
+    jwtExpiresIn: '15m',
+    refreshSecret: process.env.REFRESH_SECRET,
+    refreshExpiresIn: '7d', // refresh token
     port: process.env.PORT || 3000,
 
     googleAuth: {
