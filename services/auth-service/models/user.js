@@ -1,31 +1,40 @@
-const fs = require('fs');
-const path = require('path');
+const bcrypt = require('bcryptjs');
 
-const filePath = path.join(__dirname, '../data/users.json');
+let users = [
+  {
+    id: 1,
+    username: 'testuser',
+    password: bcrypt.hashSync('pass', 10),
+  }
+];
 
-function loadUsers() {
-    return JSON.parse(fs.readFileSync(filePath));
-}
-
-function saveUsers(users) {
-    fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
-}
+let refreshTokens = [];
+let blacklistedTokens = [];
 
 module.exports = {
-    findByUsername: (username) => {
-        const users = loadUsers();
-        return users.find(user => user.username === username);
-    },
+  findByUsername: (username) =>
+    users.find(user => user.username === username),
 
-    findById: (id) => {
-        const users = loadUsers();
-        return users.find(user => user.id === id);
-    },
+  findById: (id) =>
+    users.find(user => user.id === id),
 
-    createUser: (newUser) => {
-        const users = loadUsers();
-        users.push(newUser);
-        saveUsers(users);
-        return newUser;
-    }
+  saveRefreshToken: (token) => {
+    refreshTokens.push(token);
+  },
+
+  removeRefreshToken: (token) => {
+    refreshTokens = refreshTokens.filter(t => t !== token);
+  },
+
+  isRefreshTokenValid: (token) => {
+    return refreshTokens.includes(token);
+  },
+
+  blacklistToken: (token) => {
+    blacklistedTokens.push(token);
+  },
+
+  isTokenBlacklisted: (token) => {
+    return blacklistedTokens.includes(token);
+  }
 };
