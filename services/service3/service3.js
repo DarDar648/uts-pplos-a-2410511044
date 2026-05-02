@@ -85,6 +85,25 @@ app.get('/log', (req, res) => {
   });
 });
 
+app.get('/log/:id_dokter', (req, res) => {
+  const { id_dokter } = req.params;
+
+  const sql = `SELECT log_kunjungan.id_log, log_kunjungan.id_reservasi, log_kunjungan.nama_pasien, 
+  dokter.nama AS nama_dokter, log_kunjungan.tanggal, log_kunjungan.jam, log_kunjungan.jam_selesai, 
+  log_kunjungan.diagnosis, log_kunjungan.total  
+  FROM log_kunjungan 
+  INNER JOIN dokter 
+  ON log_kunjungan.id_dokter = dokter.id_dokter 
+  WHERE log_kunjungan.id_dokter = ?
+  ORDER BY id_log`;
+
+  db.query(sql, [id_dokter], (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.json(results);
+  });
+});
+
+
 // jalankan service
 app.listen(port, () => {
   console.log(`Service1 jalan di port ${port}`);
