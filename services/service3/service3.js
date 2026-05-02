@@ -20,20 +20,66 @@ db.connect(err => {
 });
 
 // routes
-app.post('/mahasiswa', (req, res) => {
-  const { nim, nama, prodi } = req.body;
+app.post('/reservasi', (req, res) => {
+  const { nama_pasien, jam } = req.body;
 
-  const sql = `INSERT INTO mahasiswa (nim, nama, prodi) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO reservasi (nama_pasien, id_dokter, tanggal, jam)
+  SELECT ?, id_dokter, CURDATE(), ? FROM jadwal
+  WHERE hari = DAYNAME(CURDATE())
+  AND TIME(?) BETWEEN jam_mulai AND jam_selesai;`;
 
-  db.query(sql, [nim, nama, prodi], (err, result) => {
+  db.query(sql, [nama_pasien, jam, jam], (err, result) => {
     if (err) return res.status(500).send(err);
 
-    res.status(201).send({ nim, nama, prodi });
+    if (result.affectedRows === 0) {
+    return res.status(400).send({
+      message: "Tidak ada jadwal dokter di jam tersebut"
+    });
+  }
+
+    res.status(201).send({ nama_pasien, jam });
   });
 });
 
 app.get('/dokter', (req, res) => {
   db.query('SELECT * FROM jadwal JOIN dokter ON jadwal.id_dokter = dokter.id_dokter ORDER BY id_jadwal', (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.send(results);
+  });
+});
+
+app.post('/selesai', (req, res) => {
+  const { id_reservasi, diagnosis, total, jam_selesai } = req.body;
+
+  const sql = `INSERT INTO log_kunjungan (id_reservasi, diagnosis, total, jam_selesai) VALUES (?, ?, ?, ?);`;
+
+  db.query(sql, [id_reservasi, diagnosis, total, jam_selesai], (err, result) => {
+    if (err) return res.status(500).send(err);
+
+    res.status(201).send({ id_reservasi, diagnosis, total, jam_selesai });
+  });
+});
+
+app.get('/reservasi', (req, res) => {
+  db.query(`SELECT reservasi.id_reservasi, reservasi.nama_pasien, 
+  dokter.nama AS nama_dokter, reservasi.tanggal, reservasi.jam 
+  FROM reservasi 
+  INNER JOIN dokter 
+  ON reservasi.id_dokter = dokter.id_dokter ORDER BY id_reservasi;`, 
+  (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.send(results);
+  });
+});
+
+app.get('/log', (req, res) => {
+  db.query(`SELECT log_kunjungan.id_log, log_kunjungan.id_reservasi, log_kunjungan.nama_pasien, 
+  dokter.nama AS nama_dokter, log_kunjungan.tanggal, log_kunjungan.jam, log_kunjungan.jam_selesai, 
+  log_kunjungan.diagnosis, log_kunjungan.total  
+  FROM log_kunjungan 
+  INNER JOIN dokter 
+  ON log_kunjungan.id_dokter = dokter.id_dokter ORDER BY id_log`, 
+    (err, results) => {
     if (err) return res.status(500).send(err);
     res.send(results);
   });
