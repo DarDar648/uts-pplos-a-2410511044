@@ -1,0 +1,127 @@
+CREATE DATABASE rumah_sakit_2410511044;
+USE rumah_sakit_2410511044;
+
+CREATE TABLE dokter (
+  id_dokter INT PRIMARY KEY,
+  nama VARCHAR(100)
+);
+
+CREATE TABLE jadwal (
+  id_jadwal INT AUTO_INCREMENT PRIMARY KEY,
+  id_dokter INT,
+  hari VARCHAR(10),
+  jam_mulai TIME,
+  jam_selesai TIME,
+  FOREIGN KEY (id_dokter) REFERENCES dokter(id_dokter)
+);
+
+CREATE TABLE reservasi (
+  id_reservasi INT AUTO_INCREMENT PRIMARY KEY,
+  nama_pasien VARCHAR(100),
+  id_dokter INT,
+  tanggal DATE,
+  jam TIME,
+  FOREIGN KEY (id_dokter) REFERENCES dokter(id_dokter)
+);
+
+CREATE TABLE log_kunjungan (
+  id_log INT AUTO_INCREMENT PRIMARY KEY,
+  id_reservasi INT,
+  nama_pasien VARCHAR(100),
+  id_dokter INT,
+  tanggal DATE,
+  jam TIME,
+  jam_selesai TIME,
+  diagnosis TEXT,
+  total DECIMAL(10,2)
+);
+
+INSERT INTO dokter (id_dokter, nama) VALUES
+(1, 'Dr. Tirta'),
+(2, 'Dr. Wati'),
+(3, 'Dr. Andi'),
+(4, 'Dr. Yuli'),
+(5, 'Dr. Bima');
+
+-- MONDAY
+INSERT INTO jadwal (id_dokter, hari, jam_mulai, jam_selesai) VALUES
+(1, 'Monday', '08:00:00', '12:00:00'),
+(2, 'Monday', '12:00:00', '16:00:00'),
+(3, 'Monday', '16:00:00', '20:00:00');
+
+-- TUESDAY
+INSERT INTO jadwal VALUES
+(NULL, 2, 'Tuesday', '08:00:00', '12:00:00'),
+(NULL, 3, 'Tuesday', '12:00:00', '16:00:00'),
+(NULL, 4, 'Tuesday', '16:00:00', '20:00:00');
+
+-- WEDNESDAY
+INSERT INTO jadwal VALUES
+(NULL, 3, 'Wednesday', '08:00:00', '12:00:00'),
+(NULL, 4, 'Wednesday', '12:00:00', '16:00:00'),
+(NULL, 5, 'Wednesday', '16:00:00', '20:00:00');
+
+-- THURSDAY
+INSERT INTO jadwal VALUES
+(NULL, 1, 'Thursday', '08:00:00', '12:00:00'),
+(NULL, 5, 'Thursday', '12:00:00', '16:00:00'),
+(NULL, 2, 'Thursday', '16:00:00', '20:00:00');
+
+-- FRIDAY
+INSERT INTO jadwal VALUES
+(NULL, 4, 'Friday', '08:00:00', '12:00:00'),
+(NULL, 1, 'Friday', '12:00:00', '16:00:00'),
+(NULL, 3, 'Friday', '16:00:00', '20:00:00');
+
+-- SATURDAY
+INSERT INTO jadwal VALUES
+(NULL, 5, 'Saturday', '08:00:00', '12:00:00'),
+(NULL, 2, 'Saturday', '12:00:00', '16:00:00'),
+(NULL, 1, 'Saturday', '16:00:00', '20:00:00');
+
+-- SUNDAY
+INSERT INTO jadwal VALUES
+(NULL, 3, 'Sunday', '08:00:00', '12:00:00'),
+(NULL, 4, 'Sunday', '12:00:00', '16:00:00'),
+(NULL, 5, 'Sunday', '16:00:00', '20:00:00');
+
+DELIMITER $$
+
+CREATE TRIGGER before_insert_log_kunjungan
+BEFORE INSERT ON log_kunjungan
+FOR EACH ROW
+BEGIN
+    DECLARE nnama_pasien VARCHAR(40);
+    DECLARE nid_dokter INT;
+    DECLARE ntanggal DATE;
+    DECLARE njam TIME;
+
+    -- ambil data reservasi
+    SELECT nama_pasien, id_dokter, tanggal, jam
+    INTO nnama_pasien, nid_dokter, ntanggal, njam
+    FROM reservasi
+    WHERE id_reservasi = NEW.id_reservasi;
+
+    -- validasi
+    IF NEW.jam_selesai <= njam THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Jam selesai harus lebih besar dari jam mulai reservasi';
+    END IF;
+    
+    IF nnama_pasien IS NULL THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'ID reservasi tidak ditemukan';
+	END IF;
+
+    -- auto fill
+    SET NEW.nama_pasien = nnama_pasien;
+    SET NEW.id_dokter = nid_dokter;
+    SET NEW.tanggal = ntanggal;
+    SET NEW.jam = njam;
+
+    DELETE FROM reservasi
+    WHERE id_reservasi = NEW.id_reservasi;
+
+END$$
+
+DELIMITER ;
