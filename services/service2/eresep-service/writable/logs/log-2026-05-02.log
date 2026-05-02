@@ -1,0 +1,22 @@
+CRITICAL - 2026-05-02 13:00:08 --> ValueError: max(): Argument #1 ($value) must contain at least one element
+[Method: POST, Route: obat]
+in APPPATH\Controllers\Obat.php on line 58.
+ 1 APPPATH\Controllers\Obat.php(58): max()
+ 2 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Obat->create()
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 4 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH\rewrite.php(44): require_once('C:\\Users\\dharu\\uts-pplos-a-2410511044\\services\\service2\\eresep-service\\public\\index.php')
+CRITICAL - 2026-05-02 13:03:06 --> ValueError: max(): Argument #1 ($value) must contain at least one element
+[Method: POST, Route: obat]
+in APPPATH\Controllers\Obat.php on line 53.
+ 1 APPPATH\Controllers\Obat.php(53): max()
+ 2 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Obat->create()
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 4 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 5 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb()
+ 8 SYSTEMPATH\rewrite.php(44): require_once('C:\\Users\\dharu\\uts-pplos-a-2410511044\\services\\service2\\eresep-service\\public\\index.php')
