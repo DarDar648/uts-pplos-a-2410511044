@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const mysql = require('mysql');
 
 const app = express();
@@ -51,12 +52,28 @@ app.get('/dokter', (req, res) => {
 app.post('/selesai', (req, res) => {
   const { id_reservasi, diagnosis, total, jam_selesai } = req.body;
 
+  // 🔥 load data obat dari PHP JSON (atau file lokal kalau mau)
+  const obatData = JSON.parse(fs.readFileSync('services/service2/eresep-service/writable/obat.json'));
+
+  // 🔍 cari obat sesuai diagnosis
+  const obatCocok = obatData.filter(item =>
+    item.diagnosa.toLowerCase() === diagnosis.toLowerCase()
+  );
+
   const sql = `INSERT INTO log_kunjungan (id_reservasi, diagnosis, total, jam_selesai) VALUES (?, ?, ?, ?);`;
 
   db.query(sql, [id_reservasi, diagnosis, total, jam_selesai], (err, result) => {
     if (err) return res.status(500).send(err);
 
-    res.status(201).send({ id_reservasi, diagnosis, total, jam_selesai });
+    res.status(201).send({
+      id_reservasi,
+      diagnosis,
+      total,
+      jam_selesai,
+
+      // 🔥 hasil e-resep otomatis
+      obat: obatCocok
+    });
   });
 });
 
@@ -102,7 +119,6 @@ app.get('/log/:id_dokter', (req, res) => {
     res.json(results);
   });
 });
-
 
 // jalankan service
 app.listen(port, () => {
