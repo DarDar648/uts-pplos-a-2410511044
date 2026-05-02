@@ -1,0 +1,353 @@
+{
+  "info": {
+    "_postman_id": "9ec48e85-3ed2-4d64-9956-dad9c5f5d01b",
+    "name": "UTS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52615526",
+    "_collection_link": "https://go.postman.co/collection/52615526-9ec48e85-3ed2-4d64-9956-dad9c5f5d01b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "protect",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3NjU4OTA1LCJleHAiOjE3Nzc2NTk4MDV9.vNezlcPBELc3I6y99tk69LPCPxnWE2PusTaTsG2Kgj0",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth-service/api/auth/protected",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth-service",
+            "api",
+            "auth",
+            "protected"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"username\": \"testuser\",\r\n \"password\": \"pass\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth-service/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth-service",
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3NTI2ODc4LCJleHAiOjE3Nzc1Mjc3Nzh9.ndJkpulgAzILj7CW9BBIcj0WzrpZmrBZt4hL3SwBxcU",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc3NTI2ODc4LCJleHAiOjE3NzgxMzE2Nzh9.-mvU5ne_NloewUEqLiwiaMXMSTT9j3k1n7n1HlTz370\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/logout",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "gauth",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/auth-service/auth/google",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth-service",
+            "auth",
+            "google"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "gprofile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExNjM5MjU3NDQ0NDUzMjc1NzMyNyIsIm5hbWUiOiJBbmRoYXJ1IFV0b21vMjMiLCJlbWFpbCI6ImRoYXJ1dXRvbW81NzBAZ21haWwuY29tIiwicGhvdG8iOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMcnhkZFc5YThja0RoVzZVcEtrakJnYVBuM3ZzY0k2WjhVSUVJcFZwY1ZVY05rVml1dz1zOTYtYyIsImlhdCI6MTc3NzY1NzQ5NiwiZXhwIjoxNzc3NjYxMDk2fQ.Y9cgHhtEPFa6KqqUCGsIewOMv2Q3eK3WKmq__UHanuw",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:3000/auth-service/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth-service",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "jadwal_dokter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/service3/dokter",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service3",
+            "dokter"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "reservasi",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nama_pasien\": \"Wano\",\r\n  \"jam\": \"8:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/service3/reservasi",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service3",
+            "reservasi"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "reservasi_selesai",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id_reservasi\": 8,\r\n  \"diagnosis\": \"maag\",\r\n  \"total\": 348000,\r\n  \"jam_selesai\": \"20:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/service3/selesai",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service3",
+            "selesai"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "log",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/service3/log",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service3",
+            "log"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "reservasi_list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/service3/reservasi",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service3",
+            "reservasi"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "list_obat",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/service2/obat",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service2",
+            "obat"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "tambah_obat",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": " {\r\n    \"nama_obat\": \"Amoxicillin\",\r\n    \"dosis\": \"500mg\",\r\n    \"diagnosa\": \"infeksi\"\r\n  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/service2/obat",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service2",
+            "obat"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete_obat",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/service2/obat/15",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "service2",
+            "obat",
+            "15"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
