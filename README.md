@@ -1,7 +1,5 @@
 # uts-pplos-a-2410511044
 
-# uts-pplos-a-2410511044
-
 ## Deskripsi
 Project ini merupakan implementasi sistem rumah sakit berbasis arsitektur microservice menggunakan Node.js dan MySQL. Sistem pada awalnya terdiri dari beberapa service (auth-service, service2, service3, dan gateway). Namun pada implementasi akhir, hanya service3 yang berhasil berjalan secara stabil dan digunakan sebagai service utama database.
 
